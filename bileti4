@@ -1,0 +1,108 @@
+1.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LENGTH 100
+
+void writeToExistingFile(const char* filename, const char* content) {
+    FILE* file = fopen(filename, "a");
+    if (file == NULL) {
+        printf("Error opening file: %s\n", filename);
+        return;
+    }
+    fprintf(file, "%s", content);
+    fclose(file);
+}
+
+int main() {
+    FILE* inputFile = fopen("data.txt", "r");
+    if (inputFile == NULL) {
+        printf("Error opening input file.\n");
+        return 1;
+    }
+
+    FILE* outputFile = fopen("new_data.txt", "w");
+    if (outputFile == NULL) {
+        printf("Error creating output file.\n");
+        fclose(inputFile);
+        return 1;
+    }
+
+    char word[MAX_LENGTH];
+    int wordCount = 0;
+    int charCount = 0;
+
+    while (fscanf(inputFile, "%s", word) != EOF) {
+        if (word[0] == 'b' || word[0] == 'B') {
+            fprintf(outputFile, "%s\n", word);
+        }
+
+        wordCount++;
+        charCount += strlen(word);
+    }
+
+    fclose(inputFile);
+    fclose(outputFile);
+
+    printf("Word count: %d\n", wordCount);
+    printf("Character count: %d\n", charCount);
+
+    writeToExistingFile("counts.txt", "Word count: ");
+    char countStr[MAX_LENGTH];
+    sprintf(countStr, "%d\n", wordCount);
+    writeToExistingFile("counts.txt", countStr);
+
+    writeToExistingFile("counts.txt", "Character count: ");
+    sprintf(countStr, "%d\n", charCount);
+    writeToExistingFile("counts.txt", countStr);
+
+    printf("Counts have been printed and written to the file.\n");
+
+    return 0;
+}
+
+2.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_LENGTH 100
+
+void pickStudents(const char* filename, int* numbers, int count) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file: %s\n", filename);
+        return;
+    }
+
+    char firstName[MAX_LENGTH];
+    char lastName[MAX_LENGTH];
+    int studentCount = 0;
+
+    while (fscanf(file, "%s %s", firstName, lastName) != EOF) {
+        studentCount++;
+
+        for (int i = 0; i < count; i++) {
+            if (studentCount == numbers[i]) {
+                printf("Student %d: %s %s\n", studentCount, firstName, lastName);
+                break;
+            }
+        }
+    }
+
+    fclose(file);
+}
+
+int main() {
+    srand(time(NULL));  // Initialize random number generator using current time
+
+    int randomNumbers[5];
+    for (int i = 0; i < 5; i++) {
+        randomNumbers[i] = (rand() % 20) + 1;
+    }
+
+    pickStudents("student_info.txt", randomNumbers, 5);
+
+    return 0;
+}
