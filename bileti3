@@ -94,3 +94,82 @@ int main() {
     return 0;
 }
 
+
+3.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+
+void decodeString(char* string) {
+	int i;
+	int j;
+    char decodingTable[11][3] = {
+        {'a', '#'},
+        {'e', '@'},
+        {'o', '!'},
+        {'u', '$'},
+        {'I', '%'},
+        {'c', '('},
+        {'k', ')'},
+        {'b', '*'},
+        {'d', '&'},
+        {'t', '^'}
+    };
+
+    for (i = 0; i < strlen(string); i++) {
+        for (j = 0; j < 11; j++) {
+            if (string[i] == decodingTable[j][1]) {
+                string[i] = decodingTable[j][0];
+                break;
+            }
+        }
+    }
+}
+
+void getCurrentDateTime(char* datetime) {
+    time_t currentTime;
+    struct tm* localTime;
+
+    currentTime = time(NULL);
+    localTime = localtime(&currentTime);
+
+    strftime(datetime, 100, "%Y-%m-%d %H:%M:%S", localTime);
+}
+
+int main() {
+    FILE* inputFile = fopen("text_shifr.txt", "r");
+    if (inputFile == NULL) {
+        printf("Error opening input file.\n");
+        return 1;
+    }
+
+    FILE* outputFile = fopen("decoded_text.txt", "w");
+    if (outputFile == NULL) {
+        printf("Error creating output file.\n");
+        fclose(inputFile);
+        return 1;
+    }
+
+    char encodedString[100];
+    fgets(encodedString, 100, inputFile);
+    fclose(inputFile);
+
+    decodeString(encodedString);
+
+    char dateTime[100];
+    getCurrentDateTime(dateTime);
+
+    fprintf(outputFile, "Decoded String: %s\n", encodedString);
+    fprintf(outputFile, "Date and Time: %s\n", dateTime);
+
+    fclose(outputFile);
+
+    printf("Decoding and writing to file completed.\n");
+
+    return 0;
+}
+
+
