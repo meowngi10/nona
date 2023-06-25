@@ -106,3 +106,76 @@ int main() {
 
     return 0;
 }
+
+
+3.
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+float calculateStandardDeviation(float* numbers, int size, float mean) {
+    float sumOfSquares = 0.0;
+    float* ptr = numbers;
+
+    for (int i = 0; i < size; i++) {
+        float deviation = *(ptr + i) - mean;
+        sumOfSquares += deviation * deviation;
+    }
+
+    return sqrt(sumOfSquares / size);
+}
+
+float calculateMedian(float* numbers, int size) {
+    // Sorting the array in ascending order
+    float* ptr = numbers;
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (*(ptr + j) > *(ptr + j + 1)) {
+                float temp = *(ptr + j);
+                *(ptr + j) = *(ptr + j + 1);
+                *(ptr + j + 1) = temp;
+            }
+        }
+    }
+
+    // Calculating the median
+    if (size % 2 == 0) {
+        return (*(ptr + size / 2 - 1) + *(ptr + size / 2)) / 2.0;
+    } else {
+        return *(ptr + size / 2);
+    }
+}
+
+int main() {
+    int size;
+    printf("Enter the number of elements: ");
+    scanf("%d", &size);
+
+    float* numbers = malloc(size * sizeof(float));
+
+    printf("Enter the elements:\n");
+    float* ptr = numbers;
+
+    for (int i = 0; i < size; i++) {
+        scanf("%f", ptr + i);
+    }
+
+    float sum = 0.0;
+    ptr = numbers;
+
+    for (int i = 0; i < size; i++) {
+        sum += *(ptr + i);
+    }
+    float mean = sum / size;
+
+    float standardDeviation = calculateStandardDeviation(numbers, size, mean);
+    float median = calculateMedian(numbers, size);
+
+    printf("Standard Deviation: %.2f\n", standardDeviation);
+    printf("Median: %.2f\n", median);
+
+    free(numbers);
+
+    return 0;
+}
