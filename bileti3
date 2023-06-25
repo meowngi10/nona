@@ -33,3 +33,64 @@ int main() {
   
     return 0;
 }
+
+2.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+
+int main() {
+    char strings[100][100];
+    int count = 0;
+    int shortestLength = 100;\
+    int i;
+  
+    printf("Enter strings (enter 0 to stop):\n");
+  
+    while (1) {
+        fgets(strings[count], 100, stdin);
+        strings[count][strlen(strings[count]) - 1] = '\0'; 
+        
+        if (strcmp(strings[count], "0") == 0) {
+            break;
+        }
+        
+        if (strlen(strings[count]) < shortestLength) {
+            shortestLength = strlen(strings[count]);
+        }
+        
+        count++;
+    }
+  
+    if (count == 0) {
+        printf("No strings entered.\n");
+        return 0;
+    }
+  
+    FILE* file = fopen("strings.txt", "w");
+    if (file == NULL) {
+        printf("Error creating file.\n");
+        return 0;
+    }
+  
+    fprintf(file, "Entered Strings:\n");
+    for (i = 0; i < count; i++) {
+        fprintf(file, "%s\n", strings[i]);
+    }
+  
+    fprintf(file, "\nShortest String(s):\n");
+  
+    for (i = 0; i < count; i++) {
+        if (strlen(strings[i]) == shortestLength) {
+            fprintf(file, "String %d - length(string)=%d\n", i + 1, shortestLength);
+        }
+    }
+  
+    fclose(file);
+  
+
+    return 0;
+}
+
