@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_NAME_LENGTH 50
+
+struct Sea {
+    char name[MAX_NAME_LENGTH];
+    int depth;
+};
+
+int main() {
+    FILE* file = fopen("seas.txt", "r");
+    if (file == NULL) {
+        printf("Failed to open the file.\n");
+        return 1;
+    }
+
+    struct Sea seas[3];
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        if (fscanf(file, "%s %d", seas[i].name, &seas[i].depth) != 2) {
+            printf("Error reading sea information from file.\n");
+            fclose(file);
+            return 1;
+        }
+    }
+
+    fclose(file);
+
+    int deepestSeaIndex = 0;
+
+    for (i = 1; i < 3; i++) {
+        if (seas[i].depth > seas[deepestSeaIndex].depth) {
+            deepestSeaIndex = i;
+        }
+    }
+
+    printf("Deepest Sea:\n");
+    printf("Name: %s\n", seas[deepestSeaIndex].name);
+    printf("Depth: %d\n", seas[deepestSeaIndex].depth);
+
+    file = fopen("deepest_sea.txt", "w");
+    if (file == NULL) {
+        printf("Failed to open the file to save the deepest sea.\n");
+        return 1;
+    }
+
+    fprintf(file, "Deepest Sea:\n");
+    fprintf(file, "Name: %s\n", seas[deepestSeaIndex].name);
+    fprintf(file, "Depth: %d\n", seas[deepestSeaIndex].depth);
+
+    fclose(file);
+
+    return 0;
+}
